@@ -1,0 +1,55 @@
+<style type="text/css">
+	.card{
+		max-width: 700px;
+		width: 100%;
+	}
+	.card-body{
+		padding: 20px;
+	}
+</style>
+
+{% if incoming_post %}
+<div class="container">
+	<div class="row">
+		<!-- Blog Post -->
+		<div class="card m-auto">
+			<h5 class="card-header">
+				<div class="row d-flex justify-content-between mx-2">
+					<div ><a href="{% url 'account' user_id=incoming_post.author.id %}">{{incoming_post.author.username}}</a></div>
+					<div ><a href="" class='text-decoration-none text-dark'>{{incoming_post.tag}}</a></div>
+				</div>
+			</h5>
+			<div class="card-body mt-2 mb-2">
+				<a href="{% url 'detail-post' incoming_post.slug %}">
+					<h2 class="card-title">{{incoming_post.title}}</h2>
+				</a>
+				{% if incoming_post.header_image %}
+					<p class="card-img-top">
+						<img src="{{incoming_post.header_image.url}}" alt="post header image">
+					</p>
+				{% endif %}
+				{% if incoming_post.author == request.user %}
+					<a href="{% url 'edit-post' incoming_post.slug %}" class="btn btn-outline-dark">Edit Post</a>
+				{% endif %}
+			</div>
+			<div class="card-footer text-muted">
+                <small> Last Edit on {{incoming_post.date_updated}} by {{incoming_post.author.username}} </small>
+			</div>
+		</div>
+	</div>
+</div>
+{% else %}
+	<div class="container">
+		<div class="row">
+			<div class="card m-auto">
+				<div class="card-body mt-2 mb-2">
+					<h2 class="card-title">
+						No results
+					</h2>
+					<p class="card-text">There were no results matching your search: "{{query}}"</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endif %}

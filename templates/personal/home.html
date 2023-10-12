@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Home Page
+{% endblock title %}
+
+
+{% block content %}
+<style type="text/css">
+  @media (max-width: 768px) {
+    .right-column {
+      margin-left: 0px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .right-column {
+      margin-left: 20px;
+    }
+  }
+
+  .blog-post-container {
+    background-color: #f2f2f2;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .create-post-bar {
+    background-color: #f2f2f2;
+    margin-bottom: 20px;
+  }
+
+  .left-column {
+    padding: 0px;
+  }
+
+  .right-column {
+    padding: 0px;
+  }
+</style>
+
+<div class="container">
+  <div class="row">
+
+    <!-- Right 'Create Post' Bar -->
+    <div class="create-post-bar d-lg-none col-lg-7 offset-lg-1 text-center">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Create a Post</h5>
+          <hr>
+          <p class="card-text">Create a post and find out what people think.</p>
+          {% if request.user.is_authenticated %}
+          <a href="{% url 'create-post' %}" class="btn btn-outline-success">Create Post</a>
+          {% else %}
+          <a href="{% url 'register' %}" class="btn btn-outline-success">Create Post</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- End Right 'Create Post' Bar -->
+
+    <!-- Blog Feed -->
+    <div class="left-column col-lg-7 offset-lg-1">
+      {% if posts %}
+        {% for post in posts %}
+          <div class="blog-post-container">
+            {% include 'snippets/blog_post_snippet.html' with incoming_post=post %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="blog-post-container">
+          {% include 'snippets/blog_post_snippet.html' with query=query %}
+        </div>
+      {% endif %}
+
+      <!-- Pagination -->
+      {% include 'snippets/blog_post_pagination.html' with posts=posts %}
+
+    </div>
+    <!-- End Blog Feed -->
+
+
+
+    <!-- Right 'Create Post' Column -->
+    <div class="right-column col-lg-3 d-lg-flex d-none flex-column text-center">
+      <div class="create-post-bar">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Create a Post</h5>
+            <hr>
+            <p class="card-text">Create a post and find out what people think.</p>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'create-post' %}" class="btn btn-outline-success">Create Post</a>
+            {% else %}
+            <a href="{% url 'register' %}" class="btn btn-outline-success">Create Post</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Right 'Create Post' Column -->
+
+  </div>
+</div>
+
+
+
+
+{% endblock content %}

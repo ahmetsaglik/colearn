@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %}Edit Post{% endblock title %}
+
+{% block content %}
+<style type="text/css">
+   .create-form {
+	    width: 100%;
+	    max-width: 100%;
+	    padding: 15px;
+	    margin: auto;
+  	}
+
+  	.submit-button{
+  		max-width: 200px;
+  	}
+
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col-lg-7 offset-lg-1">
+
+			{% if success_message %}
+				<h3 style="color:green; text-align: center;">{{success_message}}</h3>
+			{% endif %}
+
+			<form class="create-form" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+				<!-- title -->
+				<div class="form-group">
+					<label for="id_title">Title</label>
+					<input class="form-control" type="text" name="title" id="id_title" placeholder="Title" value="{{form.initial.title}}" required autofocus>
+				</div>
+				
+				
+				<!-- Header Image -->
+				<div class="form-group">
+					<label for="id_title">Header Image</label>
+					{% render_field form.header_image class="form-control" placeholder="Choose a header image" %}
+				</div>
+				
+
+                <!--Tag-->
+                <div class="form-group">
+                    <label for="id_title">Post Tag</label>
+                    {% render_field form.tag class="form-control" placeholder="Insert tag for your post" %}
+                </div>
+
+				<!-- Body -->
+				<div class="form-group">
+					<label for="id_body">Content</label>
+					{% render_field form.body class="form-control" placeholder="This blog is about..." %}
+					{{form.media}}
+				</div>
+
+
+				{% for field in form %}
+					<p>
+						{% for error in field.errors %}
+							<p style="color: red">{{ error }}</p>
+						{% endfor %}
+					</p>
+				{% endfor %}
+				{% if form.non_field_errors %}
+					<div style="color: red">
+						<p>{{form.non_field_errors}}</p>
+					</div>
+				{% endif %}
+
+				<!-- Submit btn -->
+				<button class="submit-button btn btn-lg btn-primary btn-block" type="submit">Update</button>
+			</form>	
+		</div>
+	</div>
+</div>
+
+
+{% endblock content %}

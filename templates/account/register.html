@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %}Register{% endblock title %}
+
+{% block content %}
+
+<style type="text/css">
+    .form-signin {
+        width: 100%;
+        max-width: 330px;
+        padding: 15px;
+        margin: auto;
+    }
+
+    .form-signin .form-floating:focus-within {
+        z-index: 2;
+    }
+
+    .form-signin input[type="email"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+</style>
+
+<form class="form-signin" method='POST'>
+    {% csrf_token %}
+    <h1 class="h3 mb-3 fw-normal text-center">Register</h1>
+
+    <div class="form-floating m-2">
+        <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Email" autofocus>
+    </div>
+    <div class="form-floating m-2">
+        <input type="text" name="username" class="form-control" id="inputUsername" placeholder="Username" >
+    </div>
+    <div class="form-floating m-2">
+        <input type="text" name="first_name" class="form-control" id="inputFirstName" placeholder="First Name" >
+    </div>
+    <div class="form-floating m-2">
+        <input type="text" name="last_name" class="form-control" id="inputLastName" placeholder="Last Name" >
+    </div>
+    <div class="form-floating m-2">
+        <input type="password" name="password1" class="form-control" id="inputPassword1" placeholder="Password">
+    </div>
+    <div class="form-floating m-2">
+        <input type="password" name="password2" class="form-control" id="inputPassword2" placeholder="Confirm Password">
+    </div>
+    <div>
+        <p>By signing in, you agree to our <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>, which we may update from time to time. We’ll occasionally send you account-related emails</p>
+    </div>
+
+    {% for field in registration_form %}
+    {% for error in field.errors %}
+    <p style='color: red;'>{{error}}</p>
+    {% endfor %}
+    {% endfor %}
+
+    {% if registration_form.non_field_errors %}
+    <div style="color: red;">
+        <p>
+            {{registration_form.non_field_errors}}
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-center"><button class="btn btn-success" type="submit">Register</button></div>
+    <div class="d-flex justify-content-center">Already have a account?  &nbsp; <a href="{% url 'login' %}">Log in</a></div>
+</form>
+
+{% endblock content %}

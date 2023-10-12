@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+
+<style type="text/css">
+    .form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+    }
+
+    .form-signin .form-floating:focus-within {
+    z-index: 2;
+    }
+
+    .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    }
+
+    .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    }
+
+</style>
+
+  <form class="form-signin" method='POST'>
+    {% csrf_token %}
+    <h1 class="h3 mb-3 fw-normal text-center">Login</h1>
+
+    <div class="form-floating m-2">
+      <input type="email" name="email" class="form-control" id="floatingInput" placeholder="Email">
+    </div>
+    <div class="form-floating m-2">
+      <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+    </div>
+
+    {% for field in login_form %}
+        {% for error in field.errors %}
+            <p style='color: red;'>{{error}}</p>
+        {% endfor %}
+    {% endfor %}
+
+    {% if login_form.non_field_errors %}
+        <div style="color: red;">
+            <p>
+                {{login_form.non_field_errors}}
+            </p>
+        </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-center"><button class="btn btn-success" type="submit">Log in</button></div>
+  </form>
+
+  <div class="container text-center"><a href="{% url 'password_reset' %}"><p>Forgot Password?</p></a></div>
+  <div class="d-flex justify-content-center">Are you new here?  &nbsp; <a href="{% url 'register' %}">Register Now!</a></div>
+
+{% endblock content %}

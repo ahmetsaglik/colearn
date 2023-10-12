@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Post Details{% endblock title %}
+
+{% block content %}
+<style type="text/css">
+	.card {
+		max-width: 700px;
+	}
+
+	.container {
+		padding: 20px;
+	}
+
+</style>
+
+<div class="container">
+	<div class="row">
+
+		<!-- Blog Post -->
+		<div class="card m-auto">
+			<div class="card-header">
+				<div class="row">
+					<div class="col"><a
+							href="{% url 'account' user_id=blog_post.author.id %}">{{blog_post.author.username}}</a>
+					</div>
+					<div class="col">
+						{% if not request.user in blog_post.likes.all %}
+						<form action="{% url 'like-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-outline-success btn-sm mr-2">Like</button>
+						</form>
+						{% else %}
+						<form action="{% url 'remove-like-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-success btn-sm">Liked</button>
+						</form>
+						{% endif %}
+					</div>
+					<div class="col">
+						{% if not request.user in blog_post.unlikes.all %}
+						<form action="{% url 'unlike-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-outline-danger btn-sm mr-2">Unlike</button>
+						</form>
+						{% else %}
+						<form action="{% url 'remove-unlike-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-danger btn-sm">Unliked</button>
+						</form>
+						{% endif %}
+					</div>
+					<div class="col">Tag: {{blog_post.tag}}</div>
+				</div>
+			</div>
+			{% if blog_post.header_image %}
+			<img class="card-img-top" src="{{blog_post.header_image.url}}" alt="header_image">
+			{% else %}
+			{% endif %}
+			<div class="card-body mt-2 mb-2">
+				<h2 class="card-title">{{blog_post.title}}</h2>
+				<p class="card-text">
+					<hr>
+					{{blog_post.body|safe}}
+				</p>
+				{% if blog_post.author == request.user %}
+				<a href="{% url 'edit-post' blog_post.slug %}"><button type="button" class="btn btn-outline-dark">Edit
+						Post</button></a>
+				<a href="{% url 'delete-post' blog_post.slug %}"><button type="button"
+						class="btn btn-outline-danger">Delete Post</button></a>
+				{% endif %}
+			</div>
+			<div class="card-footer text-muted">
+				<div class="row d-flex justify-content-between">
+					<div class="col">
+						Likes: {{likes_count}} | Unlikes: {{unlikes_count}}
+					</div>
+				</div>
+				<hr>
+				Last Edit on {{blog_post.date_updated}} by {{blog_post.author.username}}
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div class="container d-flex justify-content-center" >
+	<div class="row">
+		<div class="col"><a href="{% url 'create-comment' blog_post.slug %}"> <button class="btn btn-primary">Add Comment</button></a></div>
+		<div class="col"><a href="{% url 'create-post-to-post' blog_post.slug %}"> <button class="btn btn-primary">Add Post</button></a></div>
+	</div>
+</div>
+
+<!--Comment Division-->
+<div class="container-fluid">
+	<div class="container-fluid">
+		<h2 class='text-center'>Comments</h2>
+		{% if blog_post.comments.all %}
+		{% for comment in blog_post.comments.all %}
+		<div class="container">
+			<div class="card m-auto">
+				<div class="card-header">
+					<div class="row">
+						<div class="row">
+							<div class="col"><a
+									href="{% url 'account' user_id=comment.author.id %}">{{comment.author.username}}</a>
+							</div>
+							<div class="col">
+								{% if not request.user in comment.likes.all %}
+								<form action="{% url 'like-comment' blog_post.slug comment.id %}" method="POST">
+									{% csrf_token %}
+									<button type="submit" name="post_id" value="{{blog_post.id}}"
+										class="btn btn-outline-success btn-sm mr-2">Like</button>
+								</form>
+								{% else %}
+								<form action="{% url 'remove-like-comment' blog_post.slug comment.id %}" method="POST">
+									{% csrf_token %}
+									<button type="submit" name="post_id" value="{{blog_post.id}}"
+										class="btn btn-success btn-sm">Liked</button>
+								</form>
+								{% endif %}
+							</div>
+							<div class="col">
+								{% if not request.user in comment.unlikes.all %}
+								<form action="{% url 'unlike-comment' blog_post.slug comment.id %}" method="POST">
+									{% csrf_token %}
+									<button type="submit" name="post_id" value="{{blog_post.id}}"
+										class="btn btn-outline-danger btn-sm mr-2">Unlike</button>
+								</form>
+								{% else %}
+								<form action="{% url 'remove-unlike-comment' blog_post.slug comment.id %}"
+									method="POST">
+									{% csrf_token %}
+									<button type="submit" name="post_id" value="{{blog_post.id}}"
+										class="btn btn-danger btn-sm">Unliked</button>
+								</form>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					{{comment.body}}
+				</div>
+				<div class="card-footer">
+					<div class="row">
+						<div class="col">Likes: {{comment.total_likes}} | Unlikes: {{comment.total_unlikes}}</div>
+						<div class="col"><a href="{% url 'reply-comment' comment.id %}"><button class='btn btn-primary'>Reply</button></a></div>
+					</div>
+				</div>
+			</div>
+			{% for reply in comment.replies.all %}
+				<div class="card mt-2 ml-auto reply">
+					<div class="card-header">{{reply.user.username}}</div>
+					<div class="card-body">{{reply.reply}}</div>
+					<div class="card-footer">
+						<div class="row">
+							<div class="col">{{reply.timestamp}}</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		{% endfor %}
+		{% endif %}
+		{%if blog_post.reply_post.all %}
+		{% for post in blog_post.reply_post.all %}
+			{% include 'snippets/blog_post_snippet.html' with incoming_post=post  %}
+		{% endfor %}
+		{% endif %}
+	</div>
+</div>
+
+
+
+{% endblock content %}
